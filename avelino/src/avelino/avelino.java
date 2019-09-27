@@ -4,11 +4,14 @@ import java.security.MessageDigest;
 import java.util.Arrays;
 
 import javax.crypto.Cipher;
+import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 import javax.xml.bind.DatatypeConverter;
 
 public class avelino {
 
+	private static final String initVector = "encryptionIntVec";
+	
 	public static String toHexString(byte[] array) {
         return DatatypeConverter.printHexBinary(array);
 	}    
@@ -33,8 +36,9 @@ public class avelino {
 		String textoClaro = "MeuTextoClaroQueSeraCifrado.Elediz:AvelinoEhUmBundao";
 		
         SecretKeySpec skeySpec = getSecretKey(chave);
-        Cipher cipher = Cipher.getInstance("AES");
-        cipher.init(Cipher.ENCRYPT_MODE, skeySpec);
+        Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5PADDING");
+        IvParameterSpec iv = new IvParameterSpec(initVector.getBytes("UTF-8"));
+        cipher.init(Cipher.ENCRYPT_MODE, skeySpec, iv);
         byte[] encrypted = cipher.doFinal(textoClaro.getBytes());
         System.out.println("Mensagem cifrada: " + toHexString(encrypted));
 	}
