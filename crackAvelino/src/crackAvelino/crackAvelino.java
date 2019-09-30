@@ -39,8 +39,8 @@ public class crackAvelino {
 		//Informacoes de entrada para descriptografar. Substituir blockMode por
 		//"AES/CTR/NoPadding" ou "AES/CBC/PKCS5Padding" conforme o modo de operacao
 		String blockMode = "AES/CTR/NoPadding";
-		String keyAsString = "36f18357be4dbd77f050515c73fcf9f2";
-		String cipheredText = "770b80259ec33beb2561358a9f2dc617e46218c0a53cbeca695ae45faa8952aa0e311bde9d4e01726d3184c34451";
+		String keyAsString = "C27A59A6AEB79853D159DD2F5486CA74";
+		String cipheredText = "656E6372797074696F6E496E6956656346D6516BBEEC5DDA5FCFD5B90FEA3F65EB68FE09CCC2B6672B1E9BC697FEC38DF6F5160BAECA755F4AE60037C923E0403DDD2FA52FCAED0DA90B";
 		
 		//Remove o IV do texto cifrado
         String initializationVectorAsString = cipheredText.substring(0, 32);
