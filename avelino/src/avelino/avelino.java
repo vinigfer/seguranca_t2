@@ -31,12 +31,7 @@ public class avelino {
 	//Gera uma chave a partir de uma String
 	//Retorna a chave secreta a partir dos 16 bytes da funcao hash aplicada sobre a string
 	public static SecretKeySpec getSecretKey (String passwd) throws Exception {
-        byte[] dataBytes = passwd.getBytes();
-
-        MessageDigest md = MessageDigest.getInstance("SHA-256");
-        md.update(dataBytes, 0, passwd.length());
-        byte[] mdbytes = md.digest();
-
+        byte[] mdbytes = toByteArray(passwd);
         System.out.println("Chave usada: " + toHexString(Arrays.copyOfRange(mdbytes, 0, 16)));
         return new SecretKeySpec(Arrays.copyOfRange(mdbytes, 0, 16), "AES");
 	}
@@ -44,9 +39,9 @@ public class avelino {
 	public static void main(String[] args) throws Exception {
 		//Informacoes de entrada para criptografar. Substituir blockMode por
 		//"AES/CTR/NoPadding" ou "AES/CBC/PKCS5Padding" conforme o modo de operacao
-		String blockMode = "AES/CTR/NoPadding";
-		String keyAsString = "MinhaChaveQualquer";
-		String clearText = "This is a sentence to be encrypted using AES and CTR mode.";
+		String blockMode = "AES/CBC/PKCS5Padding";
+		String keyAsString = "140b41b22a29beb4061bda66b6747e14";
+		String clearText = "Next Thursday one of the best teams in the world will face a big challenge in the Libertadores da America Championship.";
 		String initializationVectorAsString = "encryptionIniVec";
 		
 		//Converte IV e chave para tipos de dados esperados pelos metodos da biblioteca
