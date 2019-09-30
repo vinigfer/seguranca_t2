@@ -1,6 +1,13 @@
+/*
+Programa usado para decifrar uma mensagem criptografada com AES
+e modo de operacao CBC ou CTR. Valores de entrada configurados
+diretamente nas primeiras linhas da funcao "main".
+Autor: Vinicius Ferreira
+Data: 3/Outubro/2019
+*/
+
 package crackAvelino;
 
-import java.security.MessageDigest;
 import java.util.Arrays;
 
 import javax.crypto.Cipher;
@@ -9,54 +16,47 @@ import javax.crypto.spec.SecretKeySpec;
 import javax.xml.bind.DatatypeConverter;
 
 public class crackAvelino {
-	
-	private static final String initVector = "encryptionIntVec";
 
+	//Funcao para converter um array de bytes para uma String em hexadecimal
     public static String toHexString(byte[] array) {
 	    return DatatypeConverter.printHexBinary(array);
 	}
 	
+    //Funcao para converter de uma String em hexadecimal para um array de bytes
 	public static byte[] toByteArray(String s) {
 		return DatatypeConverter.parseHexBinary(s);
 	}
 	
+	//Gera uma chave a partir de uma String. Converte a mesma para array de bytes,
+	//usando apenas os primeiros 16 bytes (como usamos AES 128)
 	public static SecretKeySpec getSecretKey(String passwd) throws Exception {
-        //byte[] dataBytes = passwd.getBytes();
         byte[] dataBytes = toByteArray(passwd);
-
-        // MessageDigest md = MessageDigest.getInstance("SHA-256");
-        // md.update(dataBytes, 0, passwd.length());
-        // byte[] mdbytes = md.digest();
-
-        //return new SecretKeySpec(Arrays.copyOfRange(mdbytes, 0, 16), "AES");
+        dataBytes = Arrays.copyOfRange(dataBytes, 0, 16);
         return new SecretKeySpec(dataBytes, "AES");
 	}
 	
 	public static void main(String[] args) throws Exception {
-		String chave = "36f18357be4dbd77f050515c73fcf9f2";
-		String textoCifrado = "770b80259ec33beb2561358a9f2dc617e46218c0a53cbeca695ae45faa8952aa0e311bde9d4e01726d3184c34451";
+		//Informacoes de entrada para descriptografar. Substituir blockMode por
+		//"AES/CTR/NoPadding" ou "AES/CBC/PKCS5Padding" conforme o modo de operacao
+		String blockMode = "AES/CTR/NoPadding";
+		String keyAsString = "36f18357be4dbd77f050515c73fcf9f2";
+		String cipheredText = "770b80259ec33beb2561358a9f2dc617e46218c0a53cbeca695ae45faa8952aa0e311bde9d4e01726d3184c34451";
 		
-//		SecretKeySpec skeySpec = getSecretKey(chave);
-//	    Cipher cipher = Cipher.getInstance("AES/CTR/NoPadding");
-//	    IvParameterSpec iv = new IvParameterSpec(initVector.getBytes("UTF-8"));
-//	    cipher.init(Cipher.DECRYPT_MODE, skeySpec, iv);
-//	    byte[] deciphered = cipher.doFinal(toByteArray(textoCifrado));
-//	    System.out.println("Mensagem decifrada: " + (new String(deciphered)));
-	    
-	    
-        SecretKeySpec skeySpec = getSecretKey(chave);
-
-        String input = textoCifrado;
-        input = input.substring(0, 32);
-        byte[] iv = toByteArray(input);
+		//Remove o IV do texto cifrado
+        String initializationVectorAsString = cipheredText.substring(0, 32);
+        cipheredText = cipheredText.substring(32);
         
-        IvParameterSpec ivp = new IvParameterSpec(iv);
+        //Converte IV e chave para tipos de dados esperados pelos metodos da biblioteca
+        byte[] ivAsBytes = toByteArray(initializationVectorAsString);
+        IvParameterSpec ivParameter = new IvParameterSpec(ivAsBytes);
+        SecretKeySpec secretKeyParameter = getSecretKey(keyAsString);
+        
+        //Configuracoes para o tipo de operacao que sera realizada
+        Cipher cipher = Cipher.getInstance(blockMode);
+        cipher.init(Cipher.DECRYPT_MODE, secretKeyParameter, ivParameter);
 
-        //Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
-        Cipher cipher = Cipher.getInstance("AES/CTR/NoPadding");
-        cipher.init(Cipher.DECRYPT_MODE, skeySpec, ivp);
-
-        byte[] deciphered = cipher.doFinal(toByteArray(textoCifrado.substring(32)));
+        //Descriptografa a mensagem, imprimindo a mesma no console
+        byte[] deciphered = cipher.doFinal(toByteArray(cipheredText));
         System.out.println("Mensagem decifrada: " + new String(deciphered));
 	}
 
