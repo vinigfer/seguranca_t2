@@ -20,20 +20,20 @@ public class avelino {
 
 	//Funcao para converter um array de bytes para uma String em hexadecimal
 	public static String toHexString(byte[] array) {
-        return DatatypeConverter.printHexBinary(array);
+		return DatatypeConverter.printHexBinary(array);
 	}
 
 	//Funcao para converter de uma String em hexadecimal para um array de bytes
 	public static byte[] toByteArray(String s) {
-        return DatatypeConverter.parseHexBinary(s);
+		return DatatypeConverter.parseHexBinary(s);
 	}
 
 	//Gera uma chave a partir de uma String
 	//Retorna a chave secreta a partir dos 16 bytes da funcao hash aplicada sobre a string
 	public static SecretKeySpec getSecretKey (String passwd) throws Exception {
-        byte[] mdbytes = toByteArray(passwd);
-        System.out.println("Chave usada: " + toHexString(Arrays.copyOfRange(mdbytes, 0, 16)));
-        return new SecretKeySpec(Arrays.copyOfRange(mdbytes, 0, 16), "AES");
+		byte[] mdbytes = toByteArray(passwd);
+		System.out.println("Chave usada: " + toHexString(Arrays.copyOfRange(mdbytes, 0, 16)));
+		return new SecretKeySpec(Arrays.copyOfRange(mdbytes, 0, 16), "AES");
 	}
 
 	public static void main(String[] args) throws Exception {
@@ -50,11 +50,11 @@ public class avelino {
 		SecretKeySpec secretKeyParameter = getSecretKey(keyAsString);
 
 		//Configuracoes para o tipo de operacao que sera realizada
-        Cipher cipher = Cipher.getInstance(blockMode);        
-        cipher.init(Cipher.ENCRYPT_MODE, secretKeyParameter, ivParameter);
+		Cipher cipher = Cipher.getInstance(blockMode);        
+		cipher.init(Cipher.ENCRYPT_MODE, secretKeyParameter, ivParameter);
         
-        //Criptografa a mensagem, imprimindo a mesma no console com o IV como prefixo
-        byte[] encrypted = cipher.doFinal(clearText.getBytes());
-        System.out.println("Mensagem cifrada: " + toHexString(ivAsBytes) + toHexString(encrypted));
+		//Criptografa a mensagem, imprimindo a mesma no console com o IV como prefixo
+		byte[] encrypted = cipher.doFinal(clearText.getBytes());
+		System.out.println("Mensagem cifrada: " + toHexString(ivAsBytes) + toHexString(encrypted));
 	}
 }
